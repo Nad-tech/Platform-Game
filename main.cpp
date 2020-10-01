@@ -1,28 +1,34 @@
-#include<\Users\dexte\source\repos\new stuff\Platform_Game\Source_Files\GUI_Headers\ConsoleWindow.h>
-#include<\Users\dexte\source\repos\new stuff\Platform_Game\Source_Files\GUI_Headers\FrameBuffer.h>
+#include<\Users\dexte\source\repos\new projects\Platform Game\Platform Game\GUI_Headers\ConsoleWindow.h>
+#include<\Users\dexte\source\repos\new projects\Platform Game\Platform Game\GUI_Headers\FrameBuffer.h>
 #include<string>
 #include<fstream>
 #include<iostream>
 #include<chrono>
 
+
+
 ConsoleWindow cWindow;
-FrameBuffer camera = FrameBuffer(40, 30, 1, 0);
+FrameBuffer camera;
 FrameBuffer world;
 ifstream inFile;
 float cameraX = 0;
 float cameraY = 0;
+
+FrameBuffer player;
 float playerX = 5;
 float playerY = (float)camera.height / 2;
+int height = 0;
 float speed = 30;
 
-FrameBuffer player = FrameBuffer(10, 5, (int)playerX, (int)playerY);
 auto tp1 = chrono::system_clock::now();
 auto tp2 = chrono::system_clock::now();
 
-	
 
 void setPixel(int x, int y, short chr, short col, FrameBuffer &f) {
 	f.setCellChrCol(y*f.width + x, chr, col);
+	if (f.colours[y*f.width + x] == 0x0) {
+		f.cellType[y*f.width + x] = 'g';
+	}
 }
 
 void updateCamera() {
@@ -119,7 +125,11 @@ int main() {
 	int worldWidth = 4 * scr_1.width;
 	int worldHeight = scr_1.height;
 
+	camera = FrameBuffer(scr_1.width, scr_1.height, 1, 0);
+
 	world = FrameBuffer(worldWidth, worldHeight, 0, 0);
+
+	player = loadFrameBuffer("ROBOT");
 
 	for (int x = 0; x < scr_1.width; x++) {
 		for (int y = 0; y < scr_1.height; y++) {
@@ -142,8 +152,8 @@ int main() {
 
 
 		if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
-			if (player.x + player.width < camera.width) playerX += speed * fElapsedTime;
-			if (player.x > camera.x + camera.width / 2) {
+			if (player.x < camera.width/2) playerX += speed * fElapsedTime;
+			else {
 				if (cameraX < 4 * scr_1.width - camera.width) {
 					cameraX += speed * fElapsedTime;
 				}
@@ -151,20 +161,30 @@ int main() {
 		}
 
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
-			if (player.x > camera.x + 1) playerX -= speed * fElapsedTime;
-			if (playerX + player.width < camera.x + camera.width / 2) {
+			if (player.x > camera.x + camera.width/3) playerX -= speed * fElapsedTime;
+			else {
 				if (cameraX > 0) {
 					cameraX -= speed * fElapsedTime;
 				}
 			}
 		}
 		
+		//Jump
 		if (GetAsyncKeyState(VK_UP) & 0x8000) {
-			if (player.y > camera.y + 1) playerY -= speed * fElapsedTime;
+			if (player.y > camera.y + 1) {
+				playerY -= speed * 2 * fElapsedTime;
+				height++;
+			}
 		}
 
-		if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
-			if (player.y + player.height < camera.y + camera.height - 1) playerY += speed * fElapsedTime;
+		//Gravity
+		if (
+			world.cellType[(player.y + player.height)*world.width + player.x] != 'g' && 
+			world.cellType[(player.y + player.height)*world.width + (player.x + player.width - 1)] != 'g') 
+		{
+			if (player.y + player.height < camera.y + camera.height - 1) {
+				playerY += speed * fElapsedTime;
+			}
 		}
 
 		updateCamera();

@@ -2,7 +2,7 @@
 
 #include<windows.h>
 #include<vector>
-#include<\Users\dexte\source\repos\new stuff\Platform_Game\Source_Files\GUI_Headers\globals.h>
+#include<\Users\dexte\source\repos\new projects\Platform Game\Platform Game\GUI_Headers\globals.h>
 
 using namespace std;
 

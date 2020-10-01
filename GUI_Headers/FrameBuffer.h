@@ -1,6 +1,6 @@
 #pragma once
 
-#include<\Users\dexte\source\repos\new stuff\Platform_Game\Source_Files\GUI_Headers\globals.h>
+#include<\Users\dexte\source\repos\new projects\Platform Game\Platform Game\GUI_Headers\globals.h>
 #include<vector>
 
 using namespace std;
@@ -13,6 +13,7 @@ public:
 	vector<short> characters;
 	vector<short> behindFrame_Characters;
 	vector<short> behindFrame_Colours;
+	vector<short> cellType;
 	int width;
 	int height;
 	int x;
@@ -31,6 +32,7 @@ public:
 		characters = vector<short>(w * h);
 		behindFrame_Characters = vector<short>(w * h);
 		behindFrame_Colours = vector<short>(w * h);
+		cellType = vector<short>(w * h);
 
 		//Default frame buffer contents
 		for (int i = 0; i < width * height; i++) {
